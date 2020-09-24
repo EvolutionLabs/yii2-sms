@@ -1,0 +1,17 @@
+{
+  "name": "evolutionlabs/yii2-sms",
+  "description": "Component for sending sms",
+  "type": "yii2-extension",
+  "license": "proprietary",
+  "minimum-stability": "dev",
+  "require": {
+    "php": ">=5.4.0",
+    "yiisoft/yii2": "~2.0.7",
+    "wadeshuler/yii2-sms": "~1.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "evo\\sms\\": ""
+    }
+  }
+}
