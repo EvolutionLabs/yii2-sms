@@ -25,3 +25,4 @@ via composer.json
 composer require evolutionlabs/yii2-sms
 ```
 
+#### Usage
