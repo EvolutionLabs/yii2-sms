@@ -1,12 +1,12 @@
 <?php
 
-namespace evo\sms\sendsmsro;
+namespace evo\sms\providers\sendsmsro;
 
-use common\components\sms\AbstractBaseMessage;
+use evo\sms\AbstractBaseMessage;
 
 /**
- *
- * @property mixed $message
+ * Class Message
+ * @package evo\sms\providers\sendsmsro
  */
 class Message extends AbstractBaseMessage
 {

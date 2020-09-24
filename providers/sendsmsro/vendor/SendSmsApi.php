@@ -1,6 +1,10 @@
 <?php
-namespace evo\sms\sendsmsro\vendor;
+namespace evo\sms\providers\sendsmsro\vendor;
 
+/**
+ * Class SendSmsApi
+ * @package evo\sms\providers\sendsmsro\vendor
+ */
 class SendSmsApi {
 
     var $url = "https://api.sendsms.ro/json";

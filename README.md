@@ -14,10 +14,7 @@ via composer.json
             "type": "vcs",
             "url": "git@gitlab.cartu.ro:components/yii-sms.git"
         }
-    ],
-    "require": {
-        "evolutionlabs/yii2-sms": "dev-dev"
-    }
+    ]
 }
 ```
 

@@ -6,8 +6,8 @@ use wadeshuler\sms\BaseSms;
 use yii\base\InvalidConfigException;
 
 /**
- *
- * @property-read mixed $client
+ * Class AbstractSms
+ * @package evo\sms
  */
 abstract class AbstractSms extends BaseSms
 {

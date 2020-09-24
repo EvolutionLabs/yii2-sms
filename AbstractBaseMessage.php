@@ -7,7 +7,8 @@ use wadeshuler\sms\MessageInterface;
 
 /**
  * TODO - left as abstract as may be required to add some abstract functions
- * @property mixed $message
+ * Class AbstractBaseMessage
+ * @package evo\sms
  */
 abstract class AbstractBaseMessage extends BaseMessage
 {

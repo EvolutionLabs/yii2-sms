@@ -1,16 +1,16 @@
 <?php
 
-namespace evo\sms\sendsmsro;
+namespace evo\sms\providers\sendsmsro;
 
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
-use common\components\sms\AbstractSms;
-use common\components\sms\providers\sendsmsro\vendor\SendSmsApi;
+use evo\sms\AbstractSms;
+use evo\sms\providers\sendsmsro\vendor\SendSmsApi;
 
 /**
  * Class SendSmsRo
- * @package common\components\sms\providers\sendsmsro
+ * @package evo\sms\providers\sendsmsro
  *
  * @property-read SendSmsApi $client
  */
