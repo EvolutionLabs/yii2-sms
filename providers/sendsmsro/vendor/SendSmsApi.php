@@ -1,29 +1,59 @@
 <?php
 namespace evo\sms\providers\sendsmsro\vendor;
 
+use ReflectionMethod;
+
 /**
  * Class SendSmsApi
  * @package evo\sms\providers\sendsmsro\vendor
  */
 class SendSmsApi {
 
-    var $url = "https://api.sendsms.ro/json";
+    /**
+     * @var string
+     */
+    public $url = "https://api.sendsms.ro/json";
 
-    var $curl = false;
+    /**
+     * @var
+     */
+    public $curl;
 
-    var $debug = true;
+    /**
+     * @var bool
+     */
+    public $debug = true;
 
-    var $error = null;
+    /**
+     * @var null
+     */
+    public $error = null;
 
-    var $username = null;
+    /**
+     * @var null
+     */
+    public $username = null;
 
-    var $password = null;
+    /**
+     * @var null
+     */
+    public $password = null;
 
-    var $performActionsImmediately = true;
+    /**
+     * @var bool
+     */
+    public $performActionsImmediately = true;
 
-    var $queuedActions = array();
+    /**
+     * @var array
+     */
+    public $queuedActions = [];
 
-    function __construct() {
+    /**
+     * SendSmsApi constructor.
+     */
+    public function __construct()
+    {
         $ver = explode(".", phpversion());
         if(($ver[0] >= 5)) {
             $this->debug("Version OK ".implode(".", $ver));
@@ -38,7 +68,12 @@ class SendSmsApi {
         }
     }
 
-    function debug($str, $nl = true) {
+    /**
+     * @param $str
+     * @param bool $nl
+     */
+    public function debug($str, $nl = true)
+    {
         if($this->debug) {
             echo $str;
             if($nl) {
@@ -47,9 +82,14 @@ class SendSmsApi {
         }
     }
 
-    function call_api($url) {
+    /**
+     * @param $url
+     * @return false|mixed
+     */
+    protected function call_api($url)
+    {
         if(function_exists('curl_init')) {
-            if($this->curl === FALSE) {
+            if(empty($this->curl)) {
                 $this->curl = curl_init();
             } else {
                 curl_close($this->curl);
@@ -59,7 +99,7 @@ class SendSmsApi {
             curl_setopt($this->curl, CURLOPT_URL, $url);
             curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($this->curl, CURLINFO_HEADER_OUT, true);
-            curl_setopt($this->curl, CURLOPT_HTTPHEADER, array("Connection: keep-alive"));
+            curl_setopt($this->curl, CURLOPT_HTTPHEADER, ["Connection: keep-alive"]);
 
             $result = curl_exec($this->curl);
 
@@ -75,7 +115,7 @@ class SendSmsApi {
 
 
 
-            if($result !== FALSE) {
+            if($result !== false) {
                 return json_decode($result, true);
             }
             return false;
@@ -83,10 +123,17 @@ class SendSmsApi {
             $this->debug("You need cURL to use this API Library");
         }
 
-        return FALSE;
+        return false;
     }
 
-    function call_api_action($method, $params, $authenticate = true) {
+    /**
+     * @param $method
+     * @param $params
+     * @param bool $authenticate
+     * @return bool|mixed
+     */
+    protected function call_api_action($method, $params, $authenticate = true)
+    {
         if($this->performActionsImmediately) {
             $url = $this->url."?action=".urlencode($method->getName());
             if($authenticate) {
@@ -95,7 +142,7 @@ class SendSmsApi {
                     $url .= "&password=".urlencode($this->password);
                 } else {
                     $this->debug("You need to specify your username and password using setUsername() and setPassword()");
-                    return FALSE;
+                    return false;
                 }
             }
             $parameters = $method->getParameters();
@@ -109,7 +156,7 @@ class SendSmsApi {
         } else {
             if(is_null($this->username) || is_null($this->password)) {
                 $this->debug("You need to specify your username and password using setUsername() and setPassword() to perform bulk actions");
-                return FALSE;
+                return false;
             }
             $action = array(
                 'command' => $method->getName(),
@@ -123,13 +170,17 @@ class SendSmsApi {
 
             $this->queuedActions[] = $action;
 
-            return TRUE;
+            return true;
         }
     }
 
-    function execute_multiple() {
+    /**
+     * @return false|mixed
+     */
+    public function execute_multiple()
+    {
         if(function_exists('curl_init')) {
-            if($this->curl === FALSE) {
+            if($this->curl === false) {
                 $this->curl = curl_init();
             } else {
                 curl_close($this->curl);
@@ -162,127 +213,246 @@ class SendSmsApi {
             $this->debug($result);
 
 
-            if($result !== FALSE) {
+            if($result !== false) {
                 return json_decode($result, true);
             }
             return false;
         } else {
             $this->debug("You need cURL to use this API Library");
         }
-        return FALSE;
+        return false;
     }
 
-    function setUsername($username) {
+    /**
+     * @param $username
+     */
+    public function setUsername($username)
+    {
         $this->username = $username;
     }
 
-    function setPassword($password) {
+    /**
+     * @param $password
+     */
+    public function setPassword($password)
+    {
         $this->password = $password;
     }
 
-    function performActionsImmediately($state) {
+    /**
+     * @param $state
+     */
+    public function performActionsImmediately($state)
+    {
         $this->performActionsImmediately = $state;
     }
 
-    function message_send($to, $text, $from = null, $report_mask = 19, $report_url = null, $charset = null, $data_coding = null, $message_class = -1, $auto_detect_encoding = null) {
+    /**
+     * @param $to
+     * @param $text
+     * @param null $from
+     * @param int $report_mask
+     * @param null $report_url
+     * @param null $charset
+     * @param null $data_coding
+     * @param int $message_class
+     * @param null $auto_detect_encoding
+     * @return bool|mixed
+     */
+    public function message_send($to, $text, $from = null, $report_mask = 19, $report_url = null, $charset = null, $data_coding = null, $message_class = -1, $auto_detect_encoding = null)
+    {
         $args = func_get_args();
-        return $this->call_api_action(new \ReflectionMethod(__CLASS__, __FUNCTION__), $args);
+        return $this->call_api_action(new ReflectionMethod(__CLASS__, __FUNCTION__), $args);
     }
 
-    function message_status($message_id) {
+    /**
+     * @param $message_id
+     * @return bool|mixed
+     */
+    public function message_status($message_id)
+    {
         $args = func_get_args();
-        return $this->call_api_action(new \ReflectionMethod(__CLASS__, __FUNCTION__), $args);
+        return $this->call_api_action(new ReflectionMethod(__CLASS__, __FUNCTION__), $args);
     }
 
-    function user_get_balance() {
+    /**
+     * @return bool|mixed
+     */
+    public function user_get_balance()
+    {
         $args = func_get_args();
-        return $this->call_api_action(new \ReflectionMethod(__CLASS__, __FUNCTION__), $args);
+        return $this->call_api_action(new ReflectionMethod(__CLASS__, __FUNCTION__), $args);
     }
 
-    function batches_list() {
+    /**
+     * @return bool|mixed
+     */
+    public function batches_list()
+    {
         $args = func_get_args();
-        return $this->call_api_action(new \ReflectionMethod(__CLASS__, __FUNCTION__), $args);
+        return $this->call_api_action(new ReflectionMethod(__CLASS__, __FUNCTION__), $args);
     }
 
-    function batch_start($batch_id) {
+    /**
+     * @param $batch_id
+     * @return bool|mixed
+     */
+    public function batch_start($batch_id)
+    {
         $args = func_get_args();
-        return $this->call_api_action(new \ReflectionMethod(__CLASS__, __FUNCTION__), $args);
+        return $this->call_api_action(new ReflectionMethod(__CLASS__, __FUNCTION__), $args);
     }
 
-    function batch_stop($batch_id) {
+    /**
+     * @param $batch_id
+     * @return bool|mixed
+     */
+    public function batch_stop($batch_id)
+    {
         $args = func_get_args();
-        return $this->call_api_action(new \ReflectionMethod(__CLASS__, __FUNCTION__), $args);
+        return $this->call_api_action(new ReflectionMethod(__CLASS__, __FUNCTION__), $args);
     }
 
-    function batch_check_status($batch_id) {
+    /**
+     * @param $batch_id
+     * @return bool|mixed
+     */
+    public function batch_check_status($batch_id)
+    {
         $args = func_get_args();
-        return $this->call_api_action(new \ReflectionMethod(__CLASS__, __FUNCTION__), $args);
+        return $this->call_api_action(new ReflectionMethod(__CLASS__, __FUNCTION__), $args);
     }
 
-    function address_book_groups_get_list() {
+    /**
+     * @return bool|mixed
+     */
+    public function address_book_groups_get_list()
+    {
         $args = func_get_args();
-        return $this->call_api_action(new \ReflectionMethod(__CLASS__, __FUNCTION__), $args);
+        return $this->call_api_action(new ReflectionMethod(__CLASS__, __FUNCTION__), $args);
     }
 
-    function address_book_group_add($name) {
+    /**
+     * @param $name
+     * @return bool|mixed
+     */
+    public function address_book_group_add($name)
+    {
         $args = func_get_args();
-        return $this->call_api_action(new \ReflectionMethod(__CLASS__, __FUNCTION__), $args);
+        return $this->call_api_action(new ReflectionMethod(__CLASS__, __FUNCTION__), $args);
     }
 
-    function address_book_group_delete($group_id) {
+    /**
+     * @param $group_id
+     * @return bool|mixed
+     */
+    public function address_book_group_delete($group_id)
+    {
         $args = func_get_args();
-        return $this->call_api_action(new \ReflectionMethod(__CLASS__, __FUNCTION__), $args);
+        return $this->call_api_action(new ReflectionMethod(__CLASS__, __FUNCTION__), $args);
     }
 
-    function address_book_contacts_get_list($group_id) {
+    /**
+     * @param $group_id
+     * @return bool|mixed
+     */
+    public function address_book_contacts_get_list($group_id)
+    {
         $args = func_get_args();
-        return $this->call_api_action(new \ReflectionMethod(__CLASS__, __FUNCTION__), $args);
+        return $this->call_api_action(new ReflectionMethod(__CLASS__, __FUNCTION__), $args);
     }
 
-    function address_book_contact_add($group_id, $phone_number, $first_name = null, $last_name = null) {
+    /**
+     * @param $group_id
+     * @param $phone_number
+     * @param null $first_name
+     * @param null $last_name
+     * @return bool|mixed
+     */
+    public function address_book_contact_add($group_id, $phone_number, $first_name = null, $last_name = null)
+    {
         $args = func_get_args();
-        return $this->call_api_action(new \ReflectionMethod(__CLASS__, __FUNCTION__), $args);
+        return $this->call_api_action(new ReflectionMethod(__CLASS__, __FUNCTION__), $args);
     }
 
-    function address_book_contact_delete($contact_id) {
+    /**
+     * @param $contact_id
+     * @return bool|mixed
+     */
+    public function address_book_contact_delete($contact_id)
+    {
         $args = func_get_args();
-        return $this->call_api_action(new \ReflectionMethod(__CLASS__, __FUNCTION__), $args);
+        return $this->call_api_action(new ReflectionMethod(__CLASS__, __FUNCTION__), $args);
     }
 
-    function address_book_contact_update($contact_id, $phone_number = null, $first_name = null, $last_name = null) {
+    /**
+     * @param $contact_id
+     * @param null $phone_number
+     * @param null $first_name
+     * @param null $last_name
+     * @return bool|mixed
+     */
+    public function address_book_contact_update($contact_id, $phone_number = null, $first_name = null, $last_name = null)
+    {
         $args = func_get_args();
-        return $this->call_api_action(new \ReflectionMethod(__CLASS__, __FUNCTION__), $args);
+        return $this->call_api_action(new ReflectionMethod(__CLASS__, __FUNCTION__), $args);
     }
 
-    function user_authorize_application($application_name, $icon_url = null, $return_url = null) {
+    /**
+     * @param $application_name
+     * @param null $icon_url
+     * @param null $return_url
+     * @return bool|mixed
+     */
+    public function user_authorize_application($application_name, $icon_url = null, $return_url = null)
+    {
         $args = func_get_args();
-        return $this->call_api_action(new \ReflectionMethod(__CLASS__, __FUNCTION__), $args, false);
+        return $this->call_api_action(new ReflectionMethod(__CLASS__, __FUNCTION__), $args, false);
     }
 
-    function user_get_api_key($request_key) {
+    /**
+     * @param $request_key
+     * @return bool|mixed
+     */
+    public function user_get_api_key($request_key)
+    {
         $args = func_get_args();
-        return $this->call_api_action(new \ReflectionMethod(__CLASS__, __FUNCTION__), $args, false);
+        return $this->call_api_action(new ReflectionMethod(__CLASS__, __FUNCTION__), $args, false);
     }
 
-    function route_check_price($to) {
+    /**
+     * @param $to
+     * @return bool|mixed
+     */
+    public function route_check_price($to)
+    {
         $args = func_get_args();
-        return $this->call_api_action(new \ReflectionMethod(__CLASS__, __FUNCTION__), $args);
+        return $this->call_api_action(new ReflectionMethod(__CLASS__, __FUNCTION__), $args);
     }
 
-    function batch_create($name, $file, $throughput = 0, $filter = false, $file_type = 'csv', $start_time = null) {
+    /**
+     * @param $name
+     * @param $file
+     * @param int $throughput
+     * @param false $filter
+     * @param string $file_type
+     * @param null $start_time
+     * @return false|mixed
+     */
+    public function batch_create($name, $file, $throughput = 0, $filter = false, $file_type = 'csv', $start_time = null)
+    {
         /* This function has special requirements in terms of streaming raw data, hence it calls the API directly */
         if(function_exists('curl_init')) {
-            if($this->curl === FALSE) {
+            if(empty($this->curl)) {
                 $this->curl = curl_init();
             } else {
                 curl_close($this->curl);
                 $this->curl = curl_init();
             }
 
-
             if(!file_exists($file)) {
                 $this->debug("File {$file} does not exist");
-                return FALSE;
+                return false;
             }
 
             if($file_type != 'zip') {
@@ -325,7 +495,7 @@ class SendSmsApi {
 
 
 
-            if($result !== FALSE) {
+            if($result !== false) {
                 return json_decode($result, true);
             }
             return false;
@@ -336,25 +506,34 @@ class SendSmsApi {
 
     }
 
-    function ok($result) {
+    /**
+     * @param $result
+     * @return bool
+     */
+    public function ok($result)
+    {
         if(is_array($result)) {
             if(array_key_exists('status', $result)) {
                 if($result['status'] >= 0) {
-                    return TRUE;
+                    return true;
                 }
                 $this->error = $result['message'];
             }
         } else {
-            if($result === TRUE) {
+            if($result === true) {
                 $this->error = "Command queued";
-                return TRUE;
+                return true;
             }
             $this->error = "Error communicating with API";
         }
-        return FALSE;
+        return false;
     }
 
-    function getError() {
+    /**
+     * @return null
+     */
+    public function getError()
+    {
         return $this->error;
     }
 }
