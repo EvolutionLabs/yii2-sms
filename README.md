@@ -12,7 +12,7 @@ via composer.json
     "repositories": [
         {
             "type": "vcs",
-            "url": "git@gitlab.cartu.ro:components/yii-sms.git"
+            "url": "https://github.com/EvolutionLabs/yii2-sms"
         }
     ]
 }
