@@ -2,7 +2,7 @@
 
 namespace evo\sms;
 
-use wadeshuler\sms\BaseSms;
+use evo\sms\base\BaseSms;
 use yii\base\InvalidConfigException;
 
 /**

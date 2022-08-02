@@ -2,8 +2,8 @@
 
 namespace evo\sms;
 
-use wadeshuler\sms\BaseMessage;
-use wadeshuler\sms\MessageInterface;
+use evo\sms\base\BaseMessage;
+use evo\sms\base\MessageInterface;
 
 /**
  * TODO - left as abstract as may be required to add some abstract functions

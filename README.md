@@ -12,7 +12,7 @@ via composer.json
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/EvolutionLabs/yii2-sms"
+            "url": "git@gitlab.cartu.ro:components/yii-sms.git"
         }
     ]
 }
@@ -56,6 +56,8 @@ Yii::$app->sms->compose()
 This is made using this yii2-extension:
 
 https://www.yiiframework.com/extension/wadeshuler/yii2-sms
+
+02-08-2022 - This extension was removed from Github, so we added the code under the base folder
 
 More details following the link
 

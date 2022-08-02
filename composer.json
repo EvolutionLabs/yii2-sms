@@ -6,8 +6,7 @@
   "minimum-stability": "dev",
   "require": {
     "php": ">=7.0",
-    "yiisoft/yii2": "~2.0.7",
-    "wadeshuler/yii2-sms": "~1.0"
+    "yiisoft/yii2": "~2.0.7"
   },
   "autoload": {
     "psr-4": {
